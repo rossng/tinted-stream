@@ -39,6 +39,18 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+      themeColorMeta.setAttribute('content', rgbString);
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'theme-color';
+      meta.content = rgbString;
+      document.head.appendChild(meta);
+    }
+  }, [rgbString]); // Update whenever color changes
+
   return (
     <div
       className={`min-h-screen min-w-screen overflow-auto ${darkBackground ? 'text-white' : 'text-black'}`}
