@@ -77,6 +77,7 @@ export function Hue({ hue, onChange }: HueProps) {
   // Draw gradient effect
   useEffect(() => {
     const canvas = ref.current;
+    console.log('$$ draw hue canvas', canvas, dimensions);
     if (!canvas || dimensions.width === 0 || dimensions.height === 0) return;
 
     canvas.width = dimensions.width;
@@ -106,35 +107,21 @@ export function Hue({ hue, onChange }: HueProps) {
   }, [dimensions]);
 
   const [r, g, b] = hsvToRgb(hue, 1, 1);
-  const markerColor = `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`;
+  const markerColour = `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`;
 
   return (
-    <div
-      ref={containerRef}
-      style={{ position: 'relative', width: '800px', height: '50px' }}
-    >
+    <div className="relative w-full h-full" ref={containerRef}>
       <canvas
         ref={ref}
         onMouseDown={handleMouseDown}
-        style={{
-          cursor: 'pointer',
-          width: '100%',
-          height: '100%',
-          display: 'block', // Removes any extra space below canvas
-        }}
+        className="cursor-pointer block w-full h-full"
       />
       <div
+        className="absolute inset-y-0 w-2 -translate-x-1/2 shadow-lg rounded pointer-events-none"
         style={{
-          position: 'absolute',
           left: `${hue * 100}%`,
-          top: '0',
-          bottom: '0',
-          width: '8px',
-          transform: 'translateX(-50%)',
-          backgroundColor: markerColor,
+          backgroundColor: markerColour,
           boxShadow: '0 0 4px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.5)',
-          borderRadius: '4px',
-          pointerEvents: 'none',
         }}
       />
     </div>

@@ -112,37 +112,25 @@ export function ChromaValue({
   }, [hue, dimensions]);
 
   const [r, g, b] = hsvToRgb(hue, saturation, value);
-  const selectorColor = `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`;
-  const borderColor = value > 0.5 ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)';
+  const selectorColour = `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`;
+  const borderColour =
+    value > 0.5 ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)';
 
   return (
-    <div
-      ref={containerRef}
-      style={{ position: 'relative', width: '800px', height: '800px' }}
-    >
+    <div ref={containerRef} className="relative w-full h-full">
       <canvas
         ref={ref}
         onMouseDown={handleMouseDown}
-        style={{
-          cursor: 'crosshair',
-          width: '100%',
-          height: '100%',
-          display: 'block',
-        }}
+        className="cursor-crosshair block"
       />
       <div
+        className="absolute w-4 h-4 -translate-x-1/2 -translate-y-1/2 rounded-full shadow-lg pointer-events-none"
         style={{
-          position: 'absolute',
           left: `${saturation * 100}%`,
           top: `${(1 - value) * 100}%`,
-          width: '16px',
-          height: '16px',
-          transform: 'translate(-50%, -50%)',
-          border: `2px solid ${borderColor}`,
-          borderRadius: '50%',
-          backgroundColor: selectorColor,
+          border: `2px solid ${borderColour}`,
+          backgroundColor: selectorColour,
           boxShadow: '0 0 4px rgba(0,0,0,0.5)',
-          pointerEvents: 'none',
         }}
       />
     </div>
