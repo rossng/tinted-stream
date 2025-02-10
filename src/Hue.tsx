@@ -77,7 +77,6 @@ export function Hue({ hue, onChange }: HueProps) {
   // Draw gradient effect
   useEffect(() => {
     const canvas = ref.current;
-    console.log('$$ draw hue canvas', canvas, dimensions);
     if (!canvas || dimensions.width === 0 || dimensions.height === 0) return;
 
     canvas.width = dimensions.width;
@@ -110,14 +109,14 @@ export function Hue({ hue, onChange }: HueProps) {
   const markerColour = `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`;
 
   return (
-    <div className="relative w-full h-full" ref={containerRef}>
+    <div className="relative h-full w-full" ref={containerRef}>
       <canvas
         ref={ref}
         onMouseDown={handleMouseDown}
-        className="cursor-pointer block w-full h-full"
+        className="block h-full w-full cursor-pointer"
       />
       <div
-        className="absolute inset-y-0 w-2 -translate-x-1/2 shadow-lg rounded pointer-events-none"
+        className="pointer-events-none absolute inset-y-0 w-2 -translate-x-1/2 rounded shadow-lg"
         style={{
           left: `${hue * 100}%`,
           backgroundColor: markerColour,

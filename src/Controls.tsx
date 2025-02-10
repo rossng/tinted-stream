@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { ChromaValue } from './ChromaValue';
 import { hsvToRgb, rgbToHsv } from './colour';
 import { Hue } from './Hue';
@@ -20,6 +20,44 @@ export function Controls({ hsv, onColourChange }: ControlsProps) {
     },
     [onColourChange],
   );
+
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+  const handleFullscreen = useCallback(async () => {
+    try {
+      await document.documentElement.requestFullscreen();
+
+      try {
+        const wakeLock = await navigator.wakeLock.request('screen');
+        const previousWakeLock = wakeLockRef.current;
+        wakeLockRef.current = wakeLock;
+        await previousWakeLock?.release();
+      } catch (err) {
+        console.warn('Wake lock request failed:', err);
+      }
+    } catch (err) {
+      console.warn('Fullscreen request failed:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleFullscreenChange = async () => {
+      if (!document.fullscreenElement) {
+        try {
+          const wakeLock = wakeLockRef.current;
+          wakeLockRef.current = null;
+          await wakeLock?.release();
+        } catch (err) {
+          console.warn('Wake lock release failed:', err);
+        }
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   return (
     <div className="flex h-screen flex-col items-stretch sm:flex-row">
@@ -136,9 +174,7 @@ export function Controls({ hsv, onColourChange }: ControlsProps) {
       </div>
       <div className="m-5 flex shrink grow flex-col items-center justify-center sm:w-[30%]">
         <button
-          onClick={() => {
-            document.documentElement.requestFullscreen();
-          }}
+          onClick={handleFullscreen}
           className="flex aspect-square w-[80%] cursor-pointer flex-col items-center justify-center rounded-xl bg-current/20 p-5 shadow-lg transition-shadow duration-200 outline-none hover:bg-current/30 hover:transition-colors"
           title="Fullscreen"
         >
